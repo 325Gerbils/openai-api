@@ -3,6 +3,7 @@ package openai
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -47,7 +48,11 @@ func Prompt(prompt string, temperature float64) (string, error) {
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+OPENAI_API_KEY)
-	req.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(`{"prompt": ` + prompt + `, "temperature": ` + strconv.FormatFloat(temperature, 'f', -1, 64) + `, "max_tokens": 60, "top_p": 1.0, "frequency_penalty": 0.0, "presence_penalty": 0.0, "stop": ["\"\"\""],}`)))
+
+	json := `{"prompt": ` + prompt + `, "temperature": ` + strconv.FormatFloat(temperature, 'f', -1, 64) + `, "max_tokens": 60, "top_p": 1.0, "frequency_penalty": 0.0, "presence_penalty": 0.0, "stop": ["\"\"\""],}`
+	fmt.Println(json)
+
+	req.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(json)))
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
