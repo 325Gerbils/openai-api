@@ -1,10 +1,14 @@
 package openai
 
 import (
+	"bytes"
+	"errors"
+	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
-const OPENAI_API_KEY
+var OPENAI_API_KEY string
 
 // Auth sets OPENAI authentication key
 func Auth(key string) {
@@ -30,10 +34,10 @@ func Auth(key string) {
 func Prompt(prompt string, temperature float64) (string, error) {
 
 	if OPENAI_API_KEY == "" {
-		return "", error("OPENAI_API_KEY not set")
+		return "", errors.New("OPENAI_API_KEY not set")
 	}
 	if prompt == "" {
-		return "", error("Empty prompt... nothing to do")
+		return "", errors.New("Empty prompt... nothing to do")
 	}
 
 	req, err := http.NewRequest("POST", "https://api.openai.com/v1/engines/davinci/completions", nil)
@@ -42,8 +46,8 @@ func Prompt(prompt string, temperature float64) (string, error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer " + OPENAI_API_KEY)
-	req.Body = []byte(`{"prompt": ` + prompt + `, "temperature": ` + strconv.FormatFloat(temperature, 'f', -1, 64) + `, "max_tokens": 60, "top_p": 1.0, "frequency_penalty": 0.0, "presence_penalty": 0.0, "stop": ["\"\"\""]}`)
+	req.Header.Set("Authorization", "Bearer "+OPENAI_API_KEY)
+	req.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(`{"prompt": ` + prompt + `, "temperature": ` + strconv.FormatFloat(temperature, 'f', -1, 64) + `, "max_tokens": 60, "top_p": 1.0, "frequency_penalty": 0.0, "presence_penalty": 0.0, "stop": ["\"\"\""]}`)))
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -56,6 +60,5 @@ func Prompt(prompt string, temperature float64) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return string(body), err
 }
