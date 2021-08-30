@@ -11,8 +11,8 @@ import (
 
 var OPENAI_API_KEY string
 
-// Auth sets OPENAI authentication key
-func Auth(key string) {
+// SetKey sets OPENAI authentication key
+func SetKey(key string) {
 	OPENAI_API_KEY = key
 }
 
@@ -49,7 +49,7 @@ func Prompt(prompt string, temperature float64) (string, error) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+OPENAI_API_KEY)
 
-	json := `{"prompt": ` + prompt + `, "temperature": ` + strconv.FormatFloat(temperature, 'f', -1, 64) + `, "max_tokens": 60, "top_p": 1.0, "frequency_penalty": 0.0, "presence_penalty": 0.0, "stop": ["\"\"\""],}`
+	json := `{"prompt": ` + prompt + `, "temperature": ` + strconv.FormatFloat(temperature, 'f', -1, 64) + `, "max_tokens": 60, "top_p": 1.0, "frequency_penalty": 0.0, "presence_penalty": 0.0, "stop": ["\"\"\""]}`
 	fmt.Println(json)
 
 	req.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(json)))
