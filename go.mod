@@ -1,4 +1,4 @@
-module 325gerbils.com/m
+module github.com/325gerbils/openai-api
 
 go 1.16
 
